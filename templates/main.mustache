@@ -1,0 +1,230 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/main
+
+    The work planner on the dashboard: teacher information, tasks by deadline, learning
+    path or as free material, the week plan, the later area, learning progress and
+    competencies.
+
+    The regions marked with data-template are rendered again in the browser after the
+    user plans an activity or changes the week.
+
+    Data attributes required for JS:
+    * data-region="block_workplanner" with data-weekstart on the root element
+    * data-region and data-template on every region the browser renders again
+    * data-dropzone, data-slot and data-day on drop targets
+    * data-action="plan" and data-action="week" on buttons, data-action="course" on the course selection
+    * data-region="infos-section" on the information section, hidden when there is no information
+
+    Context variables required for this template:
+    * rootid - Id of the root element
+    * canplan - Whether the user may plan activities
+    * courseid, courses - Course selection (id, name, selected); courseid 0 shows all courses
+    * weekstart - Start of the shown week
+    * help - Help icons of the sections (infos, tasks, week, later, progress, competencies)
+    * hasinfos, infos - Teacher information, see block_workplanner/infos
+    * dated, paths, free - Tasks, see block_workplanner/tasks_dated, tasks_path, tasks_free
+    * days and week navigation - see block_workplanner/week
+    * later - see block_workplanner/later
+    * hasprogress, progress - see block_workplanner/progress
+    * hascompetencies, competencies - see block_workplanner/competencies
+
+    Example context (json):
+    {
+        "rootid": "block_workplanner1",
+        "canplan": true,
+        "courseid": 0,
+        "courses": [
+            {"id": 5, "name": "Maths 7b", "selected": false},
+            {"id": 6, "name": "German 7b", "selected": false}
+        ],
+        "weekstart": 1792792800,
+        "weeklabel": "19 October – 25 October 2026",
+        "prevweek": 1792188000,
+        "nextweek": 1793397600,
+        "thisweek": 1792792800,
+        "isthisweek": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October", "istoday": false, "isweekend": false,
+             "hasentries": false, "entries": []},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October", "istoday": true, "isweekend": false,
+             "hasentries": true, "entries": [
+                {"cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+                 "hasurl": true, "coursename": "Maths 7b", "colorindex": 0, "isdeadline": false, "deadlinetext": "",
+                 "isdone": false, "candrag": true}
+            ]}
+        ],
+        "hasinfos": true,
+        "infos": [
+            {"coursename": "Maths 7b", "colorindex": 0, "authorname": "Anna Becker", "text": "Test on Thursday.",
+             "timetext": "20/10/26, 07:45"}
+        ],
+        "hasdated": true,
+        "dated": [
+            {"label": "This week", "isoverdue": false, "cards": [
+                {"cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+                 "hasurl": true, "iconurl": "https://example.com/theme/image.php/boost/assign/1/monologo",
+                 "modtype": "Assignment", "coursename": "Maths 7b", "colorindex": 0, "hasdue": true,
+                 "duetext": "Due: 22/10/26, 23:59", "isoverdue": false, "isdone": false, "isinprogress": false,
+                 "islocked": false, "isplanned": true, "plantext": "Planned: Tue, 20 October", "candrag": true,
+                 "hasnote": false, "note": "", "hascompetencies": true, "competencytext": "1 competency",
+                 "competencies": [{"title": "Calculate with fractions"}]}
+            ]}
+        ],
+        "haspaths": false,
+        "paths": [],
+        "hasfree": false,
+        "free": [],
+        "haslater": false,
+        "later": [],
+        "hasprogress": true,
+        "progress": [
+            {"hascompletion": true, "coursename": "Maths 7b", "colorindex": 0, "completed": 7, "total": 12,
+             "percent": 58, "counttext": "7 of 12", "hasoverdue": false, "overduetext": "",
+             "hasgrades": true, "grades": [{"name": "Fractions test", "grade": "8.00 / 10.00"}]}
+        ],
+        "hascompetencies": true,
+        "competencysummary": "0 achieved · 1 in progress · 0 open",
+        "competencies": [
+            {"title": "Calculate with fractions", "coursenames": "Maths 7b", "isachieved": false, "isinprogress": true,
+             "isopen": false, "statetext": "In progress: 2 of 4 activities"}
+        ]
+    }
+}}
+<div id="{{rootid}}" class="block_workplanner" data-region="block_workplanner" data-weekstart="{{weekstart}}"
+    data-courseid="{{courseid}}">
+    <div class="visually-hidden" aria-live="polite" data-region="status"></div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <label for="{{rootid}}-course" class="mb-0 fw-bold">{{#str}}coursefilter, block_workplanner{{/str}}</label>
+        <select id="{{rootid}}-course" class="form-select w-auto" data-action="course">
+            <option value="0"{{^courseid}} selected{{/courseid}}>{{#str}}allcourses, block_workplanner{{/str}}</option>
+            {{#courses}}
+            <option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>
+            {{/courses}}
+        </select>
+    </div>
+
+    <section class="block_workplanner-section block_workplanner-infos card mb-3" aria-labelledby="{{rootid}}-infos"
+        data-region="infos-section"{{^hasinfos}} hidden{{/hasinfos}}>
+        <div class="card-body">
+            <h4 id="{{rootid}}-infos" class="h5 d-flex align-items-center">
+                {{#str}}infos, block_workplanner{{/str}}
+                {{#help.infos}}{{>core/help_icon}}{{/help.infos}}
+            </h4>
+            <div data-region="infos" data-template="block_workplanner/infos">
+                {{> block_workplanner/infos}}
+            </div>
+        </div>
+    </section>
+
+    <div class="block_workplanner-columns">
+        <section class="block_workplanner-section block_workplanner-tasks card" aria-labelledby="{{rootid}}-tasks">
+            <div class="card-body">
+                <h4 id="{{rootid}}-tasks" class="h5 d-flex align-items-center">
+                    {{#str}}tasks, block_workplanner{{/str}}
+                    {{#help.tasks}}{{>core/help_icon}}{{/help.tasks}}
+                </h4>
+                <ul class="nav nav-tabs nav-fill flex-nowrap small mb-2 block_workplanner-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link active" id="{{rootid}}-tab-dated" data-bs-toggle="tab"
+                            data-bs-target="#{{rootid}}-dated" role="tab" aria-controls="{{rootid}}-dated" aria-selected="true">
+                            {{#str}}viewdated, block_workplanner{{/str}}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link" id="{{rootid}}-tab-path" data-bs-toggle="tab"
+                            data-bs-target="#{{rootid}}-path" role="tab" aria-controls="{{rootid}}-path" aria-selected="false">
+                            {{#str}}viewpath, block_workplanner{{/str}}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link" id="{{rootid}}-tab-free" data-bs-toggle="tab"
+                            data-bs-target="#{{rootid}}-free" role="tab" aria-controls="{{rootid}}-free" aria-selected="false">
+                            {{#str}}viewfree, block_workplanner{{/str}}
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content block_workplanner-scroll" {{#canplan}}data-dropzone="true" data-slot="none"{{/canplan}}>
+                    <div class="tab-pane fade show active" id="{{rootid}}-dated" role="tabpanel"
+                        aria-labelledby="{{rootid}}-tab-dated" data-region="tasks-dated" data-template="block_workplanner/tasks_dated">
+                        {{> block_workplanner/tasks_dated}}
+                    </div>
+                    <div class="tab-pane fade" id="{{rootid}}-path" role="tabpanel"
+                        aria-labelledby="{{rootid}}-tab-path" data-region="tasks-path" data-template="block_workplanner/tasks_path">
+                        {{> block_workplanner/tasks_path}}
+                    </div>
+                    <div class="tab-pane fade" id="{{rootid}}-free" role="tabpanel"
+                        aria-labelledby="{{rootid}}-tab-free" data-region="tasks-free" data-template="block_workplanner/tasks_free">
+                        {{> block_workplanner/tasks_free}}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="block_workplanner-main">
+            <section class="block_workplanner-section card mb-3" aria-labelledby="{{rootid}}-week">
+                <div class="card-body">
+                    <h4 id="{{rootid}}-week" class="h5 d-flex align-items-center">
+                        {{#str}}week, block_workplanner{{/str}}
+                        {{#help.week}}{{>core/help_icon}}{{/help.week}}
+                    </h4>
+                    <div data-region="week" data-template="block_workplanner/week">
+                        {{> block_workplanner/week}}
+                    </div>
+                </div>
+            </section>
+            <section class="block_workplanner-section card" aria-labelledby="{{rootid}}-later">
+                <div class="card-body">
+                    <h4 id="{{rootid}}-later" class="h5 d-flex align-items-center">
+                        {{#str}}later, block_workplanner{{/str}}
+                        {{#help.later}}{{>core/help_icon}}{{/help.later}}
+                    </h4>
+                    <div data-region="later" data-template="block_workplanner/later">
+                        {{> block_workplanner/later}}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="block_workplanner-side">
+            <section class="block_workplanner-section card mb-3" aria-labelledby="{{rootid}}-progress">
+                <div class="card-body">
+                    <h4 id="{{rootid}}-progress" class="h5 d-flex align-items-center">
+                        {{#str}}progress, block_workplanner{{/str}}
+                        {{#help.progress}}{{>core/help_icon}}{{/help.progress}}
+                    </h4>
+                    <div data-region="progress" data-template="block_workplanner/progress">
+                        {{> block_workplanner/progress}}
+                    </div>
+                </div>
+            </section>
+            <section class="block_workplanner-section card" aria-labelledby="{{rootid}}-competencies">
+                <div class="card-body">
+                    <h4 id="{{rootid}}-competencies" class="h5 d-flex align-items-center">
+                        {{#str}}competencies, block_workplanner{{/str}}
+                        {{#help.competencies}}{{>core/help_icon}}{{/help.competencies}}
+                    </h4>
+                    <div data-region="competencies" data-template="block_workplanner/competencies">
+                        {{> block_workplanner/competencies}}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

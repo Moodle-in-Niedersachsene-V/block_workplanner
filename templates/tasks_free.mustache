@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/tasks_free
+
+    Materials without a deadline that are not part of a learning path.
+
+    Context variables required for this template:
+    * hasfree - Whether there are any
+    * free - Cards, see block_workplanner/task_card
+
+    Example context (json):
+    {
+        "canplan": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October"},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October"}
+        ],
+        "hasfree": true,
+        "free": [
+            {"cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+             "hasurl": true, "iconurl": "https://example.com/theme/image.php/boost/assign/1/monologo",
+             "modtype": "Assignment", "coursename": "Maths 7b", "colorindex": 0, "hasdue": true,
+             "duetext": "Due: 22/10/26, 23:59", "isoverdue": false, "isdone": false, "isinprogress": false,
+             "islocked": false, "isplanned": true, "plantext": "Planned: Tue, 20 October", "candrag": true,
+             "hasnote": true, "note": "Start with exercise 3.", "hascompetencies": true, "competencytext": "1 competency",
+             "competencies": [{"title": "Calculate with fractions"}]}
+        ]
+    }
+}}
+{{#hasfree}}
+<p class="small text-muted">{{#str}}freeintro, block_workplanner{{/str}}</p>
+{{#free}}
+{{> block_workplanner/task_card}}
+{{/free}}
+{{/hasfree}}
+{{^hasfree}}
+<p class="text-muted mb-0">{{#str}}nofree, block_workplanner{{/str}}</p>
+{{/hasfree}}

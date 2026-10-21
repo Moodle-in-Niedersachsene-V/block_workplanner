@@ -1,0 +1,91 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/week
+
+    The week plan: navigation between weeks and seven days. Each day shows the teachers'
+    deadlines and the user's own plans and takes dropped activities.
+
+    Data attributes required for JS:
+    * data-action="week" with data-weekstart on the navigation buttons
+    * data-dropzone, data-slot="day" and data-day on each day
+
+    Context variables required for this template:
+    * weeklabel, prevweek, nextweek, thisweek, isthisweek - Week navigation
+    * days - Days with day, weekday, datetext, istoday, isweekend, hasentries and entries
+
+    Example context (json):
+    {
+        "canplan": true,
+        "weeklabel": "19 October – 25 October 2026",
+        "prevweek": 1792188000, "nextweek": 1793397600, "thisweek": 1792792800, "isthisweek": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October", "istoday": false, "isweekend": false,
+             "hasentries": true, "entries": [
+                {"cmid": 13, "courseid": 6, "name": "Reading diary", "url": "https://example.com/mod/assign/view.php?id=13",
+                 "hasurl": true, "coursename": "German 7b", "colorindex": 1, "isdeadline": true,
+                 "deadlinetext": "Due 23:59", "isdone": false, "candrag": false}
+            ]},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October", "istoday": true, "isweekend": false,
+             "hasentries": true, "entries": [
+                {"cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+                 "hasurl": true, "coursename": "Maths 7b", "colorindex": 0, "isdeadline": false, "deadlinetext": "",
+                 "isdone": false, "candrag": true}
+            ]},
+            {"day": 1793311200, "weekday": "Sun", "datetext": "25 October", "istoday": false, "isweekend": true,
+             "hasentries": false, "entries": []}
+        ]
+    }
+}}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-action="week" data-weekstart="{{prevweek}}">
+        {{#pix}}t/left, core, {{#str}}previousweek, block_workplanner{{/str}}{{/pix}}
+    </button>
+    <span class="fw-bold">{{weeklabel}}</span>
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-action="week" data-weekstart="{{nextweek}}">
+        {{#pix}}t/right, core, {{#str}}nextweek, block_workplanner{{/str}}{{/pix}}
+    </button>
+    {{^isthisweek}}
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-action="week" data-weekstart="{{thisweek}}">
+        {{#str}}today, block_workplanner{{/str}}
+    </button>
+    {{/isthisweek}}
+</div>
+<div class="block_workplanner-weekscroll">
+    <ol class="block_workplanner-week list-unstyled mb-2">
+        {{#days}}
+        <li class="block_workplanner-day{{#istoday}} block_workplanner-today{{/istoday}}{{#isweekend}} block_workplanner-weekend{{/isweekend}}"
+            {{#canplan}}data-dropzone="true" data-slot="day" data-day="{{day}}"{{/canplan}}>
+            <div class="block_workplanner-dayhead small mb-1">
+                <span class="fw-bold">{{weekday}}</span> {{datetext}}
+                {{#istoday}}<span class="badge bg-primary">{{#str}}today, block_workplanner{{/str}}</span>{{/istoday}}
+            </div>
+            {{#hasentries}}
+            <ul class="list-unstyled mb-0">
+                {{#entries}}
+                <li>{{> block_workplanner/entry}}</li>
+                {{/entries}}
+            </ul>
+            {{/hasentries}}
+        </li>
+        {{/days}}
+    </ol>
+</div>
+<div class="d-flex flex-wrap gap-3 small text-muted">
+    <span><span class="block_workplanner-legend block_workplanner-deadline" aria-hidden="true"></span>{{#str}}legenddeadline, block_workplanner{{/str}}</span>
+    <span><span class="block_workplanner-legend block_workplanner-c0" aria-hidden="true"></span>{{#str}}legendplan, block_workplanner{{/str}}</span>
+</div>

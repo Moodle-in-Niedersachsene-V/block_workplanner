@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/plan_menu
+
+    Menu to plan an activity without dragging: a day of the shown week, the later area,
+    or removing the plan. It works with the keyboard and on touch screens.
+
+    Data attributes required for JS:
+    * data-action="plan" with data-cmid, data-slot and data-day on each menu item
+
+    Context variables required for this template:
+    * cmid, name - The activity
+    * isplanned - Whether the activity is planned already
+    * days - Days of the shown week (from the parent context) with day, weekday and datetext
+
+    Example context (json):
+    {
+        "cmid": 12, "name": "Fractions practice", "isplanned": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October"},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October"}
+        ]
+    }
+}}
+<div class="dropdown">
+    <button type="button" class="btn btn-sm btn-outline-secondary block_workplanner-planbutton" data-bs-toggle="dropdown"
+        aria-expanded="false" title="{{#str}}plan, block_workplanner{{/str}}">
+        {{#pix}}i/calendar, core{{/pix}}<span class="visually-hidden">{{#str}}planactivity, block_workplanner, {{name}}{{/str}}</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        {{#days}}
+        <li>
+            <button type="button" class="dropdown-item" data-action="plan" data-cmid="{{cmid}}" data-slot="day" data-day="{{day}}">
+                {{weekday}}, {{datetext}}
+            </button>
+        </li>
+        {{/days}}
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <button type="button" class="dropdown-item" data-action="plan" data-cmid="{{cmid}}" data-slot="later" data-day="0">
+                {{#str}}later, block_workplanner{{/str}}
+            </button>
+        </li>
+        {{#isplanned}}
+        <li>
+            <button type="button" class="dropdown-item" data-action="plan" data-cmid="{{cmid}}" data-slot="none" data-day="0">
+                {{#str}}removeplan, block_workplanner{{/str}}
+            </button>
+        </li>
+        {{/isplanned}}
+    </ul>
+</div>

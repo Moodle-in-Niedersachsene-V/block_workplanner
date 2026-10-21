@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/progress
+
+    Learning progress per course: finished activities of all activities with completion
+    tracking, and the user's own grades as far as the gradebook shows them.
+
+    Context variables required for this template:
+    * hasprogress - Whether there is anything to show
+    * progress - Courses with hascompletion, coursename, colorindex, percent, counttext,
+      hasoverdue, overduetext, hasgrades and grades (name, grade)
+
+    Example context (json):
+    {
+        "hasprogress": true,
+        "progress": [
+            {"hascompletion": true, "coursename": "Maths 7b", "colorindex": 0, "completed": 7, "total": 12,
+             "percent": 58, "counttext": "7 of 12", "hasoverdue": false, "overduetext": "",
+             "hasgrades": true, "grades": [
+                {"name": "Fractions test", "grade": "8.00 / 10.00"},
+                {"name": "Fractions practice", "grade": "Good"}
+             ]},
+            {"hascompletion": true, "coursename": "German 7b", "colorindex": 1, "completed": 4, "total": 10,
+             "percent": 40, "counttext": "4 of 10", "hasoverdue": true, "overduetext": "1 overdue",
+             "hasgrades": false, "grades": []}
+        ]
+    }
+}}
+{{#hasprogress}}
+<ul class="list-unstyled mb-0">
+    {{#progress}}
+    <li class="mb-3">
+        <div class="d-flex justify-content-between small">
+            <span class="fw-bold">{{coursename}}</span>
+            {{#hascompletion}}<span class="text-muted">{{counttext}}</span>{{/hascompletion}}
+        </div>
+        {{#hascompletion}}
+        <div class="progress block_workplanner-progress" role="progressbar" aria-label="{{coursename}}"
+            aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar block_workplanner-bar block_workplanner-c{{colorindex}}" style="width: {{percent}}%"></div>
+        </div>
+        {{/hascompletion}}
+        {{#hasoverdue}}<div class="small text-danger">{{overduetext}}</div>{{/hasoverdue}}
+        {{#hasgrades}}
+        <details class="block_workplanner-grades small mt-1">
+            <summary>{{#str}}showgrades, block_workplanner{{/str}}</summary>
+            <ul class="list-unstyled mb-0 mt-1">
+                {{#grades}}
+                <li class="d-flex justify-content-between gap-2">
+                    <span class="block_workplanner-cardtext">{{name}}</span>
+                    <span class="fw-bold text-nowrap">{{grade}}</span>
+                </li>
+                {{/grades}}
+            </ul>
+        </details>
+        {{/hasgrades}}
+    </li>
+    {{/progress}}
+</ul>
+{{/hasprogress}}
+{{^hasprogress}}
+<p class="text-muted mb-0">{{#str}}noprogress, block_workplanner{{/str}}</p>
+{{/hasprogress}}

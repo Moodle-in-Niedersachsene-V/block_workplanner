@@ -1,0 +1,45 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/infos
+
+    Teacher information from the user's courses, newest first.
+
+    Context variables required for this template:
+    * infos - List of information with coursename, colorindex, authorname, text and timetext
+
+    Example context (json):
+    {
+        "infos": [
+            {"coursename": "Maths 7b", "colorindex": 0, "authorname": "Anna Becker",
+             "text": "Test on Thursday. Please finish step 3 of the learning path first.", "timetext": "20/10/26, 07:45"},
+            {"coursename": "Biology 7", "colorindex": 2, "authorname": "Can Yilmaz",
+             "text": "We use the microscopes on Wednesday.", "timetext": "19/10/26, 16:10"}
+        ]
+    }
+}}
+<ul class="block_workplanner-infolist list-unstyled mb-0">
+    {{#infos}}
+    <li class="block_workplanner-info block_workplanner-c{{colorindex}} rounded p-2">
+        <div class="small text-muted">
+            <span class="block_workplanner-dot" aria-hidden="true"></span>
+            {{coursename}} · {{authorname}} · {{timetext}}
+        </div>
+        <p class="block_workplanner-text mb-0">{{text}}</p>
+    </li>
+    {{/infos}}
+</ul>

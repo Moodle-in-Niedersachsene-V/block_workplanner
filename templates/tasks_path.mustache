@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/tasks_path
+
+    Learning paths with their steps in order. The next step to work on is highlighted.
+
+    Context variables required for this template:
+    * haspaths - Whether there are any
+    * paths - Paths with name, colorindex, counttext and steps (number, iscurrent, card)
+
+    Example context (json):
+    {
+        "canplan": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October"},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October"}
+        ],
+        "haspaths": true,
+        "paths": [
+            {"name": "Maths 7b: Fractions", "colorindex": 0, "counttext": "2 of 6 steps finished", "steps": [
+                {"number": 3, "iscurrent": true, "card": {"cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+             "hasurl": true, "iconurl": "https://example.com/theme/image.php/boost/assign/1/monologo",
+             "modtype": "Assignment", "coursename": "Maths 7b", "colorindex": 0, "hasdue": true,
+             "duetext": "Due: 22/10/26, 23:59", "isoverdue": false, "isdone": false, "isinprogress": false,
+             "islocked": false, "isplanned": true, "plantext": "Planned: Tue, 20 October", "candrag": true,
+             "hasnote": true, "note": "Start with exercise 3.", "hascompetencies": true, "competencytext": "1 competency",
+             "competencies": [{"title": "Calculate with fractions"}]} }
+            ]}
+        ]
+    }
+}}
+{{#haspaths}}
+{{#paths}}
+<div class="block_workplanner-path mb-3">
+    <h5 class="h6 d-flex align-items-center gap-2 mb-1">
+        <span class="block_workplanner-dot block_workplanner-c{{colorindex}}" aria-hidden="true"></span>
+        {{name}}
+    </h5>
+    <p class="small text-muted mb-2">{{counttext}}</p>
+    <ol class="list-unstyled mb-0">
+        {{#steps}}
+        <li class="d-flex gap-2{{#iscurrent}} block_workplanner-current{{/iscurrent}}">
+            <span class="block_workplanner-step" aria-hidden="true">{{number}}</span>
+            <div class="flex-grow-1 block_workplanner-cardtext">
+                {{#iscurrent}}<div class="small fw-bold text-primary">{{#str}}nextstep, block_workplanner{{/str}}</div>{{/iscurrent}}
+                {{#card}}{{> block_workplanner/task_card}}{{/card}}
+            </div>
+        </li>
+        {{/steps}}
+    </ol>
+</div>
+{{/paths}}
+{{/haspaths}}
+{{^haspaths}}
+<p class="text-muted mb-0">{{#str}}nopaths, block_workplanner{{/str}}</p>
+{{/haspaths}}

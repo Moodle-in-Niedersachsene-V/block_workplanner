@@ -1,0 +1,92 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_workplanner/task_card
+
+    One activity as a compact task card: name, course, type, deadline and plan in two lines,
+    the teacher note shortened, assigned competencies folded away. Users who may plan can
+    drag the card or plan it with its menu.
+
+    Data attributes required for JS:
+    * data-draggable and data-cmid on cards the user can plan
+    * data-courseid on the link to the activity, to offer the way back to the planner
+
+    Context variables required for this template:
+    * canplan - Whether the user may plan activities (from the parent context)
+    * cmid, courseid, name, url, hasurl, iconurl, modtype, coursename, colorindex
+    * hasdue, duetext, isoverdue, isdone, isinprogress, islocked
+    * isplanned, plantext, candrag, hasnote, note, hascompetencies, competencytext, competencies
+
+    Example context (json):
+    {
+        "canplan": true,
+        "days": [
+            {"day": 1792792800, "weekday": "Mon", "datetext": "19 October"},
+            {"day": 1792879200, "weekday": "Tue", "datetext": "20 October"}
+        ],
+        "cmid": 12, "courseid": 5, "name": "Fractions practice", "url": "https://example.com/mod/assign/view.php?id=12",
+        "hasurl": true, "iconurl": "https://example.com/theme/image.php/boost/assign/1/monologo",
+        "modtype": "Assignment", "coursename": "Maths 7b", "colorindex": 0, "hasdue": true,
+        "duetext": "Due: 22/10/26, 23:59", "isoverdue": false, "isdone": false, "isinprogress": true,
+        "islocked": false, "isplanned": true, "plantext": "Planned: Tue, 20 October", "candrag": true,
+        "hasnote": true, "note": "Start with exercise 3.", "hascompetencies": true,
+        "competencytext": "2 competencies",
+        "competencies": [{"title": "Calculate with fractions"}, {"title": "Explain a solution in writing"}]
+    }
+}}
+<div class="block_workplanner-card card mb-1{{#isoverdue}} border-danger{{/isoverdue}}{{#isdone}} block_workplanner-done{{/isdone}}"
+    data-region="card" data-cmid="{{cmid}}"{{#canplan}}{{#candrag}} draggable="true" data-draggable="true"{{/candrag}}{{/canplan}}>
+    <div class="card-body px-2 py-1 d-flex gap-2 align-items-start">
+        <img class="icon block_workplanner-icon mt-1" src="{{iconurl}}" alt="" aria-hidden="true">
+        <div class="flex-grow-1 block_workplanner-cardtext">
+            <div class="block_workplanner-cardname">
+                {{#hasurl}}<a href="{{url}}" data-courseid="{{courseid}}">{{name}}</a>{{/hasurl}}
+                {{^hasurl}}{{name}}{{/hasurl}}
+            </div>
+            <div class="small text-muted">
+                <span class="block_workplanner-dot block_workplanner-c{{colorindex}}" aria-hidden="true"></span>
+                {{coursename}} · {{modtype}}
+            </div>
+            {{#hasdue}}
+            <div class="small{{#isoverdue}} text-danger fw-bold{{/isoverdue}}">{{duetext}}</div>
+            {{/hasdue}}
+            <div class="d-flex flex-wrap gap-1">
+                {{#isdone}}<span class="badge bg-success">{{#str}}statedone, block_workplanner{{/str}}</span>{{/isdone}}
+                {{#islocked}}<span class="badge bg-secondary">{{#str}}statelocked, block_workplanner{{/str}}</span>{{/islocked}}
+                {{#isinprogress}}<span class="badge bg-info text-dark">{{#str}}stateinprogress, block_workplanner{{/str}}</span>{{/isinprogress}}
+                {{#isplanned}}<span class="badge bg-light text-dark border">{{plantext}}</span>{{/isplanned}}
+            </div>
+            {{#hasnote}}
+            <div class="small block_workplanner-note mt-1">
+                <span class="fw-bold">{{#str}}teachernote, block_workplanner{{/str}}</span>
+                <span class="block_workplanner-text block_workplanner-clamp" title="{{note}}">{{note}}</span>
+            </div>
+            {{/hasnote}}
+            {{#hascompetencies}}
+            <details class="small mt-1 block_workplanner-cardcompetencies">
+                <summary>{{competencytext}}</summary>
+                <ul class="mb-0 ps-3">
+                    {{#competencies}}
+                    <li>{{title}}</li>
+                    {{/competencies}}
+                </ul>
+            </details>
+            {{/hascompetencies}}
+        </div>
+        {{#canplan}}{{#candrag}}{{> block_workplanner/plan_menu}}{{/candrag}}{{/canplan}}
+    </div>
+</div>
