@@ -17,7 +17,6 @@
 namespace block_workplanner\external;
 
 use block_workplanner\local\plan_store;
-use core_external\external_api;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
@@ -55,8 +54,9 @@ final class set_plan_test extends \advanced_testcase {
         [, $page, $student] = $this->create_student_with_page();
         $day = make_timestamp(2026, 10, 21, 15, 30);
 
-        $result = set_plan::execute($page->cmid, plan_store::SLOT_DAY, $day);
-        external_api::clean_returnvalue(set_plan::execute_returns(), $result);
+        // The function declares no return value, so there is nothing for clean_returnvalue() to check.
+        $this->assertNull(set_plan::execute_returns());
+        $this->assertNull(set_plan::execute($page->cmid, plan_store::SLOT_DAY, $day));
 
         $plan = $DB->get_record('block_workplanner_plan', ['userid' => $student->id, 'cmid' => $page->cmid], '*', MUST_EXIST);
         $this->assertSame(plan_store::SLOT_DAY, $plan->slot);
