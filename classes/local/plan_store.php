@@ -45,7 +45,7 @@ final class plan_store {
      * Returns the plans of a user.
      *
      * @param int $userid
-     * @return array<int, \stdClass> Plans keyed by course module id.
+     * @return array Plans keyed by course module id.
      */
     public static function get_for_user(int $userid): array {
         global $DB;

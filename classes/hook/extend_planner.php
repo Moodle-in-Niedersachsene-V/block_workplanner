@@ -39,13 +39,13 @@ final class extend_planner {
     /** @var int[] Courses shown in the planner. */
     public readonly array $courseids;
 
-    /** @var array<int, list<array{text: string, authorname: string, timecreated: int}>> Information per course id. */
+    /** @var array Information per course id. */
     private array $infos = [];
 
-    /** @var array<int, string> Teacher note per course module id. */
+    /** @var array Teacher note per course module id. */
     private array $notes = [];
 
-    /** @var array<int, array<int, string>> Competency titles per course module id and competency id. */
+    /** @var array Competency titles per course module id and competency id. */
     private array $competencies = [];
 
     /**
@@ -105,7 +105,7 @@ final class extend_planner {
      * Returns the information added for a course.
      *
      * @param int $courseid
-     * @return list<array{text: string, authorname: string, timecreated: int}>
+     * @return array List of entries with text, authorname and timecreated.
      */
     public function get_infos(int $courseid): array {
         return $this->infos[$courseid] ?? [];
@@ -125,7 +125,7 @@ final class extend_planner {
      * Returns the competencies of an activity as competency id => title.
      *
      * @param int $cmid
-     * @return array<int, string>
+     * @return array Competency id => title.
      */
     public function get_competencies(int $cmid): array {
         return $this->competencies[$cmid] ?? [];

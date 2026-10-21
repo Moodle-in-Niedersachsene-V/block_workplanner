@@ -166,7 +166,7 @@ final class planner {
     /**
      * Returns the visible courses the user takes part in as a learner, keyed by id.
      *
-     * @return array<int, \stdClass>
+     * @return array Keyed by id.
      */
     private function get_courses(): array {
         $courses = [];
@@ -190,8 +190,8 @@ final class planner {
      * @param string $coursename Formatted course name.
      * @param int $colour Colour index of the course.
      * @param extend_planner $hook Data added by other plugins.
-     * @param array<int, \stdClass> $plans Plans of the user by course module id.
-     * @return array{items: array<int, array>, paths: int[][], progress: ?array}
+     * @param array $plans Plans of the user by course module id.
+     * @return array Keys items (activities by course module id), paths (course module ids per path) and progress.
      */
     private function collect_course(
         \stdClass $course,
@@ -339,7 +339,7 @@ final class planner {
     /**
      * Exports open activities with a deadline, grouped into overdue, this week, next week and later.
      *
-     * @param array<int, array> $items
+     * @param array $items Activities by course module id.
      * @return array
      */
     private function export_dated(array $items): array {
@@ -382,7 +382,7 @@ final class planner {
      * @param \stdClass $course
      * @param string $coursename
      * @param int[] $cmids Steps in path order.
-     * @param array<int, array> $items Activities of the course.
+     * @param array $items Activities of the course.
      * @return array
      */
     private function export_path(\stdClass $course, string $coursename, array $cmids, array $items): array {
@@ -421,7 +421,7 @@ final class planner {
      *
      * Open activities come first, finished ones after them, each in course order.
      *
-     * @param array<int, array> $items
+     * @param array $items Activities by course module id.
      * @return array
      */
     private function export_free(array $items): array {
@@ -435,7 +435,7 @@ final class planner {
     /**
      * Exports the activities in the later area.
      *
-     * @param array<int, array> $items
+     * @param array $items Activities by course module id.
      * @return array
      */
     private function export_later(array $items): array {
@@ -450,7 +450,7 @@ final class planner {
      * Exports the seven days of the week plan with deadlines and the user's plans.
      *
      * @param week $week
-     * @param array<int, array> $items
+     * @param array $items Activities by course module id.
      * @return array
      */
     private function export_days(week $week, array $items): array {
@@ -493,7 +493,7 @@ final class planner {
      * progress when at least one of them is finished or started. Competencies in progress
      * come first, then open ones, then achieved ones, each by title.
      *
-     * @param array<int, array> $items
+     * @param array $items Activities by course module id.
      * @return array
      */
     private function export_competencies(array $items): array {

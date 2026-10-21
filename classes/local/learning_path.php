@@ -65,7 +65,7 @@ final class learning_path {
      * Returns the position of every course module in course order.
      *
      * @param \course_modinfo $modinfo
-     * @return array<int, int> Course module id => position.
+     * @return array Course module id => position.
      */
     private static function course_order(\course_modinfo $modinfo): array {
         $order = [];
@@ -81,8 +81,8 @@ final class learning_path {
      * Collects the dependencies "required activity => dependent activity".
      *
      * @param \course_modinfo $modinfo
-     * @param array<int, int> $order
-     * @return array<int, int[]> Dependent course module id => required course module ids.
+     * @param array $order Course module id => position in course order.
+     * @return array Dependent course module id => required course module ids.
      */
     private static function find_edges(\course_modinfo $modinfo, array $order): array {
         $gradeitems = null;
@@ -143,7 +143,7 @@ final class learning_path {
      * @param \stdClass $condition
      * @param \cm_info $cm Activity that carries the condition.
      * @param \course_modinfo $modinfo
-     * @param array<int, int> $order
+     * @param array $order Course module id => position in course order.
      * @return int Course module id, 0 if the condition does not require completion.
      */
     private static function required_by_completion(
@@ -176,7 +176,7 @@ final class learning_path {
      * Maps the grade items of the course's activities to their course modules.
      *
      * @param \course_modinfo $modinfo
-     * @return array<int, int> Grade item id => course module id.
+     * @return array Grade item id => course module id.
      */
     private static function grade_item_modules(\course_modinfo $modinfo): array {
         global $DB;
@@ -200,7 +200,7 @@ final class learning_path {
     /**
      * Groups activities that are joined by dependencies, directly or indirectly.
      *
-     * @param array<int, int[]> $edges
+     * @param array $edges Dependent course module id => required course module ids.
      * @return int[][] Each group as a list of course module ids.
      */
     private static function group(array $edges): array {
@@ -228,8 +228,8 @@ final class learning_path {
      * Orders the steps of one path so that every step follows the steps it requires.
      *
      * @param int[] $members
-     * @param array<int, int[]> $edges
-     * @param array<int, int> $order
+     * @param array $edges Dependent course module id => required course module ids.
+     * @param array $order Course module id => position in course order.
      * @return int[]
      */
     private static function sort_steps(array $members, array $edges, array $order): array {
