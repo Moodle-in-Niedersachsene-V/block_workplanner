@@ -329,7 +329,8 @@ final class planner {
         if ($cm->url) {
             return $cm->url->out(false);
         }
-        $url = course_get_url($cm->get_course(), $cm->sectionnum);
+        // Pass the id: the enrolment query returns only some course fields, and the course format needs all of them.
+        $url = course_get_url((int) $cm->course, $cm->sectionnum);
         $url->set_anchor('module-' . $cm->id);
         return $url->out(false);
     }
