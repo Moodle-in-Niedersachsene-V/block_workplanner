@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_workplanner';
-$plugin->version = 2026102009;
+$plugin->version = 2026102010;
 $plugin->requires = 2025041400;
 $plugin->maturity = MATURITY_BETA;
-$plugin->release = '0.3.0 (Build: 2026102009)';
+$plugin->release = '0.3.0 (Build: 2026102010)';
 $plugin->maintainer = 'Moodle in Niedersachsen e. V.';

@@ -170,7 +170,7 @@ final class planner {
      */
     private function get_courses(): array {
         $courses = [];
-        foreach (enrol_get_all_users_courses($this->userid, true, 'enablecompletion, showgrades') as $course) {
+        foreach (enrol_get_all_users_courses($this->userid, true, 'enablecompletion, showgrades, format') as $course) {
             $context = \context_course::instance($course->id);
             if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $context, $this->userid)) {
                 continue;
@@ -410,7 +410,8 @@ final class planner {
      */
     private function export_path(\stdClass $course, string $coursename, array $cmids, array $items): array {
         $first = $items[$cmids[0]];
-        $sectionname = get_section_name($course, $first['sectionnum']);
+        // Pass the id: the course format needs fields the enrolment query does not return.
+        $sectionname = get_section_name((int) $course->id, $first['sectionnum']);
         $steps = [];
         $currentfound = false;
         $done = 0;
