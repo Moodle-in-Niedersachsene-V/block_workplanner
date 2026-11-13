@@ -209,7 +209,11 @@ final class planner {
         $done = 0;
         $overdue = 0;
         foreach ($modinfo->get_cms() as $cm) {
-            if ($cm->deletioninprogress || !$cm->url || !$cm->is_visible_on_course_page()) {
+            if ($cm->deletioninprogress || !$cm->is_visible_on_course_page()) {
+                continue;
+            }
+            // Text and media areas have no page of their own; they count only when learners tick them off.
+            if (!$cm->url && $completion->is_enabled($cm) == COMPLETION_TRACKING_NONE) {
                 continue;
             }
             $item = $this->build_item($cm, $coursename, $colour, $completion, $hook, $plans[(int) $cm->id] ?? null);
@@ -225,7 +229,7 @@ final class planner {
         $visiblepaths = [];
         foreach ($paths as $path) {
             $steps = array_values(array_filter($path, fn(int $cmid): bool => isset($items[$cmid])));
-            if (count($steps) > 1) {
+            if ($steps) {
                 $visiblepaths[] = $steps;
                 foreach ($steps as $cmid) {
                     $items[$cmid]['inpath'] = true;
@@ -295,7 +299,7 @@ final class planner {
             'coursename' => $coursename,
             'colorindex' => $colour,
             'name' => $cm->get_formatted_name(['escape' => false]),
-            'url' => $islocked ? '' : $cm->url->out(false),
+            'url' => $islocked ? '' : $this->activity_url($cm),
             'iconurl' => $cm->get_icon_url()->out(false),
             'modtype' => (string) $cm->get_module_type_name(),
             'sectionnum' => (int) $cm->sectionnum,
@@ -310,6 +314,24 @@ final class planner {
             'note' => $hook->get_note((int) $cm->id),
             'competencies' => $hook->get_competencies((int) $cm->id),
         ];
+    }
+
+    /**
+     * Returns the address where the user works on an activity.
+     *
+     * Activities with a page of their own link to it. Text and media areas, such as an
+     * embedded video, link to their place on the course page, where they are ticked off.
+     *
+     * @param \cm_info $cm
+     * @return string
+     */
+    private function activity_url(\cm_info $cm): string {
+        if ($cm->url) {
+            return $cm->url->out(false);
+        }
+        $url = course_get_url($cm->get_course(), $cm->sectionnum);
+        $url->set_anchor('module-' . $cm->id);
+        return $url->out(false);
     }
 
     /**

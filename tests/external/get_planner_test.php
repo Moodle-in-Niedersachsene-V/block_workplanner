@@ -136,6 +136,36 @@ final class get_planner_test extends \advanced_testcase {
     }
 
     /**
+     * A text and media area with completion is a path step, so the activity it unlocks is no free material.
+     *
+     * @return void
+     */
+    public function test_text_area_with_completion_starts_learning_path(): void {
+        global $CFG, $DB;
+        require_once($CFG->libdir . '/completionlib.php');
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $video = $generator->create_module('label', ['course' => $course->id, 'completion' => COMPLETION_TRACKING_MANUAL]);
+        $assign = $generator->create_module('assign', ['course' => $course->id]);
+        $DB->set_field('course_modules', 'availability', json_encode([
+            'op' => '&',
+            'c' => [['type' => 'completion', 'cm' => (int) $video->cmid, 'e' => COMPLETION_COMPLETE]],
+            'showc' => [true],
+        ]), ['id' => $assign->cmid]);
+        rebuild_course_cache($course->id, true);
+        $student = $generator->create_and_enrol($course, 'student');
+        $this->setUser($student);
+
+        $result = external_api::clean_returnvalue(get_planner::execute_returns(), get_planner::execute(0));
+
+        $this->assertCount(1, $result['paths']);
+        $steps = array_map(fn(array $step): int => $step['card']['cmid'], $result['paths'][0]['steps']);
+        $this->assertSame([(int) $video->cmid, (int) $assign->cmid], $steps);
+        $this->assertSame([], $result['free']);
+    }
+
+    /**
      * Courses the user teaches are not part of their planner.
      *
      * @return void

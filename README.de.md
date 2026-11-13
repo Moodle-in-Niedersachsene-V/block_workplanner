@@ -45,6 +45,7 @@ erscheinen nicht; Lehrkräfte sehen ihre eigenen Kurse also nicht als Aufgaben.
 | Termine | Termine der Aktivität (z. B. Fälligkeit, Schließung), sonst das erwartete Abschlussdatum |
 | Lernpfade | Voraussetzungen „Abschluss von“ oder „Bewertung in“ einer anderen Aktivität |
 | Frei | Aktivitäten ohne Termin und außerhalb eines Lernpfads |
+| Text- und Medienfelder | Nur mit Abschlussverfolgung (z. B. ein eingebettetes Video zum Abhaken); sie verlinken auf ihre Stelle auf der Kursseite |
 | Fortschritt | Aktivitätsabschluss |
 | Kompetenzen, Infos, Hinweise | andere Plugins über den Hook |
 

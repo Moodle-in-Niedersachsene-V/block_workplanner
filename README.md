@@ -43,6 +43,7 @@ do not see their own courses as tasks.
 | Deadlines | Activity dates (for example due date, close time), else the expected completion date |
 | Learning paths | Access restrictions "requires completion of" or "requires grade in" another activity |
 | Free | Activities without a deadline and outside a learning path |
+| Text and media areas | Shown only with completion tracking (for example an embedded video ticked off by hand); they link to their place on the course page |
 | Progress | Activity completion |
 | Competencies, teacher information, notes | Other plugins through the hook |
 
